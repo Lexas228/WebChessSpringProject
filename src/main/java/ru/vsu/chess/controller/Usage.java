@@ -1,6 +1,7 @@
 package ru.vsu.chess.controller;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import ru.vsu.chess.controller.playercontroller.HumanController;
 import ru.vsu.chess.model.figure.Figure;
 import ru.vsu.chess.model.game.Game;
 import ru.vsu.chess.model.others.BasicGalaPosition;
@@ -13,6 +14,7 @@ import ru.vsu.chess.model.player.Bot;
 import ru.vsu.chess.model.player.Human;
 import ru.vsu.chess.model.player.Player;
 import ru.vsu.chess.controller.playercontroller.BotController;
+import ru.vsu.chess.services.movechecker.StandartHumanMoveValidator;
 import ru.vsu.chess.spring.SpringConfiguration;
 
 public class Usage {
@@ -24,9 +26,12 @@ public class Usage {
         GameService gameService = context.getBean("gameService", GameService.class);
         BotController botController = context.getBean("botController", BotController.class);
         StandartBotMoveValidator botMoveValidator = context.getBean("standartBotMoveValidator", StandartBotMoveValidator.class);
+        StandartHumanMoveValidator moveValidator = context.getBean("standartHumanMoveValidator", StandartHumanMoveValidator.class);
+        HumanController humanController = context.getBean("humanController", HumanController.class);
         context.close();
         gameService.connectPlayer(game, new Bot("Ai"), botController, botMoveValidator);
-        gameService.connectPlayer(game, new Human("Dima"), botController, botMoveValidator);
+        gameService.connectPlayer(game, new Bot("Dima"), botController, botMoveValidator); // if wanna watch at bot's play
+        //gameService.connectPlayer(game, new Human("Oleg"), humanController, moveValidator); // if wanna play with bot
         gameService.startGame(game, Integer.MAX_VALUE, game1 -> {
             updateTwo(game);
         }, new BasicGalaPosition());
