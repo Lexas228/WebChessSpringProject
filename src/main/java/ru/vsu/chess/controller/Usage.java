@@ -3,6 +3,7 @@ package ru.vsu.chess.controller;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ru.vsu.chess.model.figure.Figure;
 import ru.vsu.chess.model.game.Game;
+import ru.vsu.chess.model.others.BasicGalaPosition;
 import ru.vsu.chess.services.gameservice.GameService;
 import ru.vsu.chess.services.movechecker.StandartBotMoveValidator;
 import ru.vsu.chess.model.cell.Cell;
@@ -28,7 +29,7 @@ public class Usage {
         gameService.connectPlayer(game, new Human("Dima"), botController, botMoveValidator);
         gameService.startGame(game, Integer.MAX_VALUE, game1 -> {
             updateTwo(game);
-        });
+        }, new BasicGalaPosition());
 
     }
 

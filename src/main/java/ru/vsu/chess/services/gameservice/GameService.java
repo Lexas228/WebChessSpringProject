@@ -23,11 +23,11 @@ public class GameService {
         game.getPlayerMoveValidatorMap().put(player, validator);
     }
 
-    public void startGame(Game game, int numOfStep, Updater updater){
+    public void startGame(Game game, int numOfStep, Updater updater, BasicPosition position){
         Cell leftUp = new Cell();
         //creating and setSettings
         creatingBoard(leftUp);
-        setGameSettings(leftUp, game);
+        setGameSettings(leftUp, game, position);
         doOtherSettings(game);
         updater.update(game);
         Helper.shuffle(game.getPlayers());
@@ -152,7 +152,7 @@ public class GameService {
     }
 
 
-    private void setGameSettings(Cell leftUp, Game game){
+    private void setGameSettings(Cell leftUp, Game game, BasicPosition position){
         List<Player> pl = new ArrayList<>(game.getPlayers());
         Player one = pl.get(0);
         Player two = pl.get(1);
@@ -174,7 +174,7 @@ public class GameService {
             Cell cl = cop;
             for(int j = 0; j < 10; j++){
                 if(i < 5){
-                    FigureType ft = BasicGalaPosition.basicUp.getOrDefault(new Point(j, i), null);
+                    FigureType ft = position.getBasicUp().getOrDefault(new Point(j, i), null);
                     if(ft != null){
                         Figure ftp = new Figure(ft);
                         figureForPlayerOne.add(ftp);
@@ -184,7 +184,7 @@ public class GameService {
                         cellFigureMap.put(cl, null);
                     }
                 }else {
-                    FigureType ft = BasicGalaPosition.basicDown.getOrDefault(new Point(j, i), null);
+                    FigureType ft = position.getBasicDown().getOrDefault(new Point(j, i), null);
                     if (ft != null) {
                         Figure ftp = new Figure(ft);
                         figureForPlayerTwo.add(ftp);

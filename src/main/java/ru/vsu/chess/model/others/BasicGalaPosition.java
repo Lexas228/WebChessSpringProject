@@ -6,14 +6,14 @@ import ru.vsu.chess.model.player.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BasicGalaPosition{
+public class BasicGalaPosition implements BasicPosition{
 
-    public static final Map<Point, FigureType> basicUp;
-    public static final Map<Point, FigureType> basicDown;
-    static{
+    private final Map<Point, FigureType> basicUp;
+    private final Map<Point, FigureType> basicDown;
+
+    public BasicGalaPosition(){
         basicUp = new HashMap<>();
         basicDown = new HashMap<>();
-        //up_left
         basicUp.put(new Point(0, 0), FigureType.GALA);
         basicUp.put(new Point(1, 0), FigureType.KORNA);
         basicUp.put(new Point(0, 1), FigureType.KORNA);
@@ -57,6 +57,15 @@ public class BasicGalaPosition{
         basicUp.put(new Point(7, 1), FigureType.KAMPA);
         basicUp.put(new Point(8, 2), FigureType.KAMPA);
         basicUp.put(new Point(9, 3), FigureType.KAMPA);
+    }
+
+
+    public Map<Point, FigureType> getBasicUp(){
+        return basicUp;
+    }
+
+    public Map<Point, FigureType> getBasicDown(){
+        return basicDown;
     }
 
 
