@@ -1,4 +1,4 @@
-package ru.vsu.chess.model.game;
+package ru.vsu.chess.model.entity;
 
 import java.util.ArrayList;
 import java.util.List;

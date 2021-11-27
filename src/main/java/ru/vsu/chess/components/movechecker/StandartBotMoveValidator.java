@@ -1,11 +1,10 @@
 package ru.vsu.chess.components.movechecker;
 
 import org.springframework.stereotype.Component;
-import ru.vsu.chess.model.Player;
-import ru.vsu.chess.model.PlayerType;
-import ru.vsu.chess.model.game.Game;
-import ru.vsu.chess.model.game.Move;
-import ru.vsu.chess.model.player.Player;
+import ru.vsu.chess.model.entity.Game;
+import ru.vsu.chess.model.entity.Move;
+import ru.vsu.chess.model.entity.Player;
+import ru.vsu.chess.model.entity.PlayerType;
 @Component
 public class StandartBotMoveValidator implements MoveValidator {
 

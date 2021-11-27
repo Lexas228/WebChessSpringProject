@@ -1,4 +1,4 @@
-package ru.vsu.chess.model.others;
+package ru.vsu.chess.components.others;
 
 public record Point(int x, int y) {
 
