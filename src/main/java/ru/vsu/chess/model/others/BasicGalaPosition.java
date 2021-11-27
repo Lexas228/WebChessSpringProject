@@ -1,7 +1,6 @@
 package ru.vsu.chess.model.others;
 
-import ru.vsu.chess.model.figure.FigureType;
-import ru.vsu.chess.model.player.Player;
+import ru.vsu.chess.model.FigureType;
 
 import java.util.HashMap;
 import java.util.Map;

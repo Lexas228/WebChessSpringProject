@@ -1,31 +1,27 @@
-package ru.vsu.chess.controller.playercontroller;
+package ru.vsu.chess.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import ru.vsu.chess.model.figure.Figure;
-import ru.vsu.chess.model.figure.FigureType;
+import ru.vsu.chess.model.*;
 import ru.vsu.chess.model.game.Game;
 import ru.vsu.chess.model.game.Move;
-import ru.vsu.chess.model.cell.Cell;
-import ru.vsu.chess.model.player.Player;
 import ru.vsu.chess.services.figureservices.FigureService;
 
-
 import java.util.*;
-@Controller
-public class BotController implements PlayerController {
+
+public class BotService implements PlayerService{
+
     private final Map<FigureType, FigureService> serviceMap;
     private static final Random rnd = new Random();
     @Autowired
-    public BotController(Map<FigureType, FigureService> serviceMap) {
+    public BotService(Map<FigureType, FigureService> serviceMap) {
         this.serviceMap = serviceMap;
     }
 
     @Override
     public Move getMove(Game game, Player forWho) {
-        List<Figure> figures = new ArrayList<>(game.getPlayerFigures().get(forWho));
+        Set<Figure> figures = forWho.getMyFigures();
         Figure fig = getRandomFigure(figures, game);
-        Cell from = game.getFigureCell().get(fig);
+        Cell from = fig.getCell();
         List<Cell> ce = serviceMap.get(fig.getMyType()).getAvailableMoves(from, game, forWho);
         while(ce.size() < 1){
             fig = getRandomFigure(figures, game);
@@ -36,12 +32,24 @@ public class BotController implements PlayerController {
     }
 
 
-    private Figure getRandomFigure(List<Figure> figures, Game game){
-        int s = rnd.nextInt(figures.size());
-        while(game.getFigureCell().get(figures.get(s)) == null){
-            s = rnd.nextInt(figures.size());
+    private Figure getRandomFigure(Set<Figure> figures, Game game){
+        Figure f = null;
+        while(f == null){
+            int s = rnd.nextInt(figures.size());
+            int step = 0;
+            for(Figure figure : figures){
+                step++;
+                if(step >= s) {
+                    f = figure;
+                    break;
+                }
+            }
         }
-        return figures.get(s);
+        return f;
     }
 
+    @Override
+    public PlayerType getPlayerType() {
+        return PlayerType.Bot;
+    }
 }

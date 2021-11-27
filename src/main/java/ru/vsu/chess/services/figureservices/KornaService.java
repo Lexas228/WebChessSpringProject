@@ -1,7 +1,7 @@
 package ru.vsu.chess.services.figureservices;
 
 import org.springframework.stereotype.Service;
-import ru.vsu.chess.model.figure.FigureType;
+import ru.vsu.chess.model.FigureType;
 
 /*
 A Korna moves as a rook in chess when in a corner of the board, and as

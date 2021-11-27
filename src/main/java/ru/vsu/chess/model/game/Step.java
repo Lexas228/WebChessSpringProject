@@ -1,8 +1,7 @@
 package ru.vsu.chess.model.game;
 
-import ru.vsu.chess.model.figure.Figure;
-import ru.vsu.chess.model.game.Move;
-import ru.vsu.chess.model.player.Player;
+import ru.vsu.chess.model.Figure;
+import ru.vsu.chess.model.Player;
 
 public record Step(Move move, Player who, Figure bittenFigure) {
 

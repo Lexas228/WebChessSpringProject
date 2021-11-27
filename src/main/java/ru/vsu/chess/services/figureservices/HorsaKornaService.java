@@ -1,9 +1,9 @@
 package ru.vsu.chess.services.figureservices;
 
-import ru.vsu.chess.model.figure.Figure;
-import ru.vsu.chess.model.figure.FigureType;
+import ru.vsu.chess.model.Figure;
+import ru.vsu.chess.model.FigureType;
 import ru.vsu.chess.model.game.Game;
-import ru.vsu.chess.model.cell.Cell;
+import ru.vsu.chess.model.Cell;
 import ru.vsu.chess.model.game.Direction;
 import ru.vsu.chess.model.player.Player;
 

@@ -1,4 +1,4 @@
-package ru.vsu.chess.model.cell;
+package ru.vsu.chess.model;
 
 public enum CellType {
     Middle,
@@ -6,5 +6,7 @@ public enum CellType {
     LD_House,
     RD_House,
     LU_House,
-    RU_House
+    RU_House,
+    Crossing,
+    Base
 }

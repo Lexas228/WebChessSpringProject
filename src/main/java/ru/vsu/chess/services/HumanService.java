@@ -1,15 +1,15 @@
-package ru.vsu.chess.controller.playercontroller;
+package ru.vsu.chess.services;
 
-import org.springframework.stereotype.Controller;
+import ru.vsu.chess.model.Cell;
+import ru.vsu.chess.model.Player;
+import ru.vsu.chess.model.PlayerType;
+import ru.vsu.chess.model.game.Direction;
 import ru.vsu.chess.model.game.Game;
 import ru.vsu.chess.model.game.Move;
-import ru.vsu.chess.model.cell.Cell;
-import ru.vsu.chess.model.game.Direction;
-import ru.vsu.chess.model.player.Player;
 
 import java.util.Scanner;
-@Controller
-public class HumanController implements PlayerController {
+
+public class HumanService implements PlayerService{
     @Override
     public Move getMove(Game game, Player forWho) {
         System.out.println("Enter move (Example: 0122): ");
@@ -37,5 +37,10 @@ public class HumanController implements PlayerController {
             s++;
         }
         return need;
+    }
+
+    @Override
+    public PlayerType getPlayerType() {
+        return PlayerType.Human;
     }
 }

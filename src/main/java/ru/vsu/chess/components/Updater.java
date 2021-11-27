@@ -1,4 +1,4 @@
-package ru.vsu.chess.controller;
+package ru.vsu.chess.components;
 
 import ru.vsu.chess.model.game.Game;
 

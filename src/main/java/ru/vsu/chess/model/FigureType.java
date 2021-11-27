@@ -1,4 +1,4 @@
-package ru.vsu.chess.model.figure;
+package ru.vsu.chess.model;
 
 public enum FigureType {
    KAMPA,
