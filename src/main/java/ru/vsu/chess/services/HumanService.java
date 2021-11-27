@@ -1,11 +1,11 @@
 package ru.vsu.chess.services;
 
-import ru.vsu.chess.model.Cell;
-import ru.vsu.chess.model.Player;
-import ru.vsu.chess.model.PlayerType;
-import ru.vsu.chess.model.game.Direction;
-import ru.vsu.chess.model.game.Game;
-import ru.vsu.chess.model.game.Move;
+import ru.vsu.chess.model.node.NodeCell;
+import ru.vsu.chess.model.entity.Player;
+import ru.vsu.chess.model.entity.PlayerType;
+import ru.vsu.chess.model.entity.Direction;
+import ru.vsu.chess.model.entity.Game;
+import ru.vsu.chess.model.entity.Move;
 
 import java.util.Scanner;
 
@@ -17,16 +17,16 @@ public class HumanService implements PlayerService{
         String s = sc.nextLine();
         int x = Integer.parseInt(Character.toString(s.charAt(0)));
         int y = Integer.parseInt(Character.toString(s.charAt(1)));
-        Cell chosen = findCell(x, y, game.getLeftUpCell());
+        NodeCell chosen = findCell(x, y, game.getLeftUpCell());
         int x1 = Integer.parseInt(Character.toString(s.charAt(2)));
         int y1 = Integer.parseInt(Character.toString(s.charAt(3)));
-        Cell to = findCell(x1, y1, game.getLeftUpCell());
+        NodeCell to = findCell(x1, y1, game.getLeftUpCell());
         return new Move(chosen, to);
     }
 
-    private Cell findCell(int x, int y, Cell leftUp){
+    private NodeCell findCell(int x, int y, NodeCell leftUp){
         int k = 0;
-        Cell need = leftUp;
+        NodeCell need = leftUp;
         while(k < x){
             need = need.getCells().get(Direction.EAST);
             k++;

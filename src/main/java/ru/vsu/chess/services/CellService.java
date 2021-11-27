@@ -2,7 +2,7 @@ package ru.vsu.chess.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.vsu.chess.model.Cell;
+import ru.vsu.chess.model.node.NodeCell;
 import ru.vsu.chess.repository.CellRepository;
 
 @Service
@@ -14,8 +14,8 @@ public class CellService {
         this.cellRepository = cellRepository;
     }
 
-    public Cell createBoard(){
-        Cell[][] c = new Cell[][];
+    public NodeCell createBoard(){
+        NodeCell[][] c = new NodeCell[][];
 
     }
 }

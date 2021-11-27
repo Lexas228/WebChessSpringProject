@@ -1,6 +1,6 @@
-package ru.vsu.chess.model.others;
+package ru.vsu.chess.components.others;
 
-import ru.vsu.chess.model.FigureType;
+import ru.vsu.chess.model.entity.FigureType;
 
 import java.util.Map;
 

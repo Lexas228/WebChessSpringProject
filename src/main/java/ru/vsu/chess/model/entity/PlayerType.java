@@ -1,4 +1,4 @@
-package ru.vsu.chess.model;
+package ru.vsu.chess.model.entity;
 
 public enum PlayerType {
     Human,

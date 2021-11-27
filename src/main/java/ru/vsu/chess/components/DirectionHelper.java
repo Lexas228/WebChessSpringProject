@@ -1,8 +1,8 @@
 package ru.vsu.chess.components;
 
 import org.springframework.stereotype.Component;
-import ru.vsu.chess.model.Player;
-import ru.vsu.chess.model.game.Direction;
+import ru.vsu.chess.model.entity.Player;
+import ru.vsu.chess.model.entity.Direction;
 
 import java.util.*;
 

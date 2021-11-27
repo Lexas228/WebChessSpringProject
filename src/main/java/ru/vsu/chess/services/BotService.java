@@ -1,9 +1,8 @@
 package ru.vsu.chess.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.vsu.chess.model.*;
-import ru.vsu.chess.model.game.Game;
-import ru.vsu.chess.model.game.Move;
+import ru.vsu.chess.model.entity.*;
+import ru.vsu.chess.model.node.NodeCell;
 import ru.vsu.chess.services.figureservices.FigureService;
 
 import java.util.*;
@@ -21,8 +20,8 @@ public class BotService implements PlayerService{
     public Move getMove(Game game, Player forWho) {
         Set<Figure> figures = forWho.getMyFigures();
         Figure fig = getRandomFigure(figures, game);
-        Cell from = fig.getCell();
-        List<Cell> ce = serviceMap.get(fig.getMyType()).getAvailableMoves(from, game, forWho);
+        NodeCell from = fig.getCell();
+        List<NodeCell> ce = serviceMap.get(fig.getMyType()).getAvailableMoves(from, game, forWho);
         while(ce.size() < 1){
             fig = getRandomFigure(figures, game);
             from = game.getFigureCell().get(fig);
