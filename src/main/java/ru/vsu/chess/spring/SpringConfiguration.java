@@ -2,11 +2,10 @@ package ru.vsu.chess.spring;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import ru.vsu.chess.components.movechecker.MoveValidator;
-import ru.vsu.chess.model.FigureType;
-import ru.vsu.chess.model.PlayerType;
+import ru.vsu.chess.model.entity.FigureType;
+import ru.vsu.chess.model.entity.PlayerType;
 import ru.vsu.chess.services.PlayerService;
 import ru.vsu.chess.services.figureservices.FigureService;
 

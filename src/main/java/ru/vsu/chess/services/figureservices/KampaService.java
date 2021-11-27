@@ -1,13 +1,13 @@
 package ru.vsu.chess.services.figureservices;
 
 import org.springframework.stereotype.Service;
-import ru.vsu.chess.model.Figure;
-import ru.vsu.chess.model.FigureType;
-import ru.vsu.chess.model.Cell;
-import ru.vsu.chess.model.game.Game;
+import ru.vsu.chess.model.entity.Figure;
+import ru.vsu.chess.model.entity.FigureType;
+import ru.vsu.chess.model.node.NodeCell;
+import ru.vsu.chess.model.entity.Game;
 
-import ru.vsu.chess.model.game.Direction;
-import ru.vsu.chess.model.CellType;
+import ru.vsu.chess.model.entity.Direction;
+import ru.vsu.chess.model.entity.CellType;
 import ru.vsu.chess.model.player.Player;
 
 import java.util.*;
@@ -26,12 +26,12 @@ Kampa can't move to "nobile" squares.
 @Service
 public class KampaService implements FigureService{
     @Override
-    public List<Cell> getAvailableMoves(Cell from, Game game, Player forWho) {
-        List<Cell> answer = new ArrayList<>();
+    public List<NodeCell> getAvailableMoves(NodeCell from, Game game, Player forWho) {
+        List<NodeCell> answer = new ArrayList<>();
         CellType r = game.getCells().get(from);
         List<Direction> list = game.getFiguresDirections().get(r).get(FigureType.KAMPA);
         for (Direction dr : list) {
-            Cell need = from.getCells().get(dr);
+            NodeCell need = from.getCells().get(dr);
             if (need != null) {
                 Figure f = game.getCellFigure().get(need);
                 boolean cross = crossed(from, need, game);
@@ -39,7 +39,7 @@ public class KampaService implements FigureService{
                 if ((hasEnemyFigure(need, game, forWho) && cross || f == null) && tc != CellType.Middle) {
                     answer.add(need);
                     if(atHome(from, game)){
-                        Cell oneMore = need.getCells().get(dr);
+                        NodeCell oneMore = need.getCells().get(dr);
                         if(oneMore != null) {
                             CellType ct = game.getCells().get(oneMore);
                             Figure g = game.getCellFigure().get(oneMore);
@@ -55,10 +55,10 @@ public class KampaService implements FigureService{
     return answer;
     }
 
-    private boolean atHome(Cell from, Game game){
+    private boolean atHome(NodeCell from, Game game){
         Figure f = game.getCellFigure().get(from);
         CellType type = game.getCells().get(from);
-        Cell startPos = game.getBasicFigureCellPosition().get(f);
+        NodeCell startPos = game.getBasicFigureCellPosition().get(f);
         CellType toc = game.getCells().get(startPos);
         Map<CellType, Set<CellType>> ls = game.getGalasHomeHelper();
         return ls != null && ls.get(toc) != null && ls.get(toc).contains(type);

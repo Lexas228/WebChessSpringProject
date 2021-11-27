@@ -1,11 +1,11 @@
 package ru.vsu.chess.components.movechecker;
 
-import ru.vsu.chess.model.Figure;
-import ru.vsu.chess.model.FigureType;
-import ru.vsu.chess.model.Player;
-import ru.vsu.chess.model.PlayerType;
-import ru.vsu.chess.model.game.Game;
-import ru.vsu.chess.model.game.Move;
+import ru.vsu.chess.model.entity.Figure;
+import ru.vsu.chess.model.entity.FigureType;
+import ru.vsu.chess.model.entity.Player;
+import ru.vsu.chess.model.entity.PlayerType;
+import ru.vsu.chess.model.entity.Game;
+import ru.vsu.chess.model.entity.Move;
 import ru.vsu.chess.model.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,9 +23,9 @@ public class UsualHumanMoveValidator implements MoveValidator {
 
     @Override
     public boolean canDoThisMove(Move move, Player who, Game game) {
-        Figure f = game.getCellFigure().get(move.getFrom());
+        Figure f = game.getCellFigureMap().get(move.from());
         if(f == null) return false;
-        return serviceMap.get(f.getMyType()).getAvailableMoves(move.getFrom(), game, who).contains(move.getTo());
+        return serviceMap.get(f.getMyType()).getAvailableMoves(move.from(), game, who).contains(move.to());
     }
 
     @Override

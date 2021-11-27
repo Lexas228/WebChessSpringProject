@@ -1,11 +1,9 @@
 package ru.vsu.chess.services.figureservices;
 
-import ru.vsu.chess.model.Figure;
-import ru.vsu.chess.model.FigureType;
-import ru.vsu.chess.model.game.Game;
-import ru.vsu.chess.model.Cell;
-import ru.vsu.chess.model.game.Direction;
-import ru.vsu.chess.model.player.Player;
+import ru.vsu.chess.model.entity.Figure;
+import ru.vsu.chess.model.entity.FigureType;
+import ru.vsu.chess.model.entity.Game;
+import ru.vsu.chess.model.entity.Direction;
 
 import java.util.ArrayList;
 import java.util.List;

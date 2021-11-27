@@ -1,7 +1,7 @@
 package ru.vsu.chess.services.figureservices;
 
 import org.springframework.stereotype.Service;
-import ru.vsu.chess.model.FigureType;
+import ru.vsu.chess.model.entity.FigureType;
 
 /*
 Horsas are just the opposite of Kornas (with an additional small difference
