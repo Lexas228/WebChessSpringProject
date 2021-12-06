@@ -16,7 +16,17 @@ public class Player {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "login")
+    private String login;
+
+    @Column(name = "password")
+    private String password;
+
     @Column(name = "Type")
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private PlayerType myType;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Roles myRole;
 }

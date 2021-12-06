@@ -3,10 +3,9 @@ package ru.vsu.chess.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import ru.vsu.chess.model.dto.GameStatusDto;
+import ru.vsu.chess.model.dto.Move;
 import ru.vsu.chess.model.dto.MoveDto;
 import ru.vsu.chess.model.entity.*;
-import ru.vsu.chess.model.node.NodeCell;
 import ru.vsu.chess.repository.jpa.GameRepository;
 import ru.vsu.chess.services.figureservices.FigureService;
 

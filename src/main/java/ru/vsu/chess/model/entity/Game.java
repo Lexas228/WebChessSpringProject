@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -43,6 +44,12 @@ public class Game {
     @Column(name = "direction")
     @ToString.Exclude
     private Map<Player, Direction> playerDirectionMap;
+
+    @OneToMany
+    @JoinTable(name = "game_steps",
+    joinColumns = @JoinColumn(name = "game_id"),
+    inverseJoinColumns = @JoinColumn(name = "step_id"))
+    private List<Step> steps;
 
 
 

@@ -3,7 +3,7 @@ package ru.vsu.chess.components.convector;
 import org.springframework.stereotype.Component;
 import ru.vsu.chess.model.dto.MoveDto;
 import ru.vsu.chess.model.entity.Game;
-import ru.vsu.chess.model.entity.Move;
+import ru.vsu.chess.model.dto.Move;
 import ru.vsu.chess.model.entity.Player;
 import ru.vsu.chess.model.entity.PlayerType;
 

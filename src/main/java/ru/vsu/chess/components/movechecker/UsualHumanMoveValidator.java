@@ -5,7 +5,7 @@ import ru.vsu.chess.model.entity.FigureType;
 import ru.vsu.chess.model.entity.Player;
 import ru.vsu.chess.model.entity.PlayerType;
 import ru.vsu.chess.model.entity.Game;
-import ru.vsu.chess.model.entity.Move;
+import ru.vsu.chess.model.dto.Move;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.vsu.chess.services.figureservices.FigureService;

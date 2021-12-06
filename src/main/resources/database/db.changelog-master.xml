@@ -23,6 +23,15 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
             <column name="id" type="bigserial">
                 <constraints primaryKey="true"/>
             </column>
+            <column name="login" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(30)">
+                <constraints nullable="false"/>
+            </column>
             <column type="varchar(30)" name="type">
                 <constraints nullable="false"/>
             </column>
@@ -116,6 +125,32 @@ http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibas
             </column>
             <column name="position" type="varchar(3)">
                 <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="step">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="bitten_figure_id" type="bigint">
+                <constraints references="figure(id)" nullable="false" foreignKeyName="fk_bitten_figure_id"/>
+            </column>
+            <column name="from" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="to" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="player_id" type="bigint">
+                <constraints nullable="false" references="player(id)" foreignKeyName="fk_player_id"/>
+            </column>
+            <column name="date" type="date"/>
+        </createTable>
+        <createTable tableName="game_steps">
+            <column name="game_id" type="bigint">
+                <constraints nullable="false" references="game(id)" foreignKeyName="fk_game_id" primaryKey="true"/>
+            </column>
+            <column name="step_id" type="bigint">
+                <constraints nullable="false" references="step(id)" primaryKey="true" foreignKeyName="fk_step_id"/>
             </column>
         </createTable>
     </changeSet>

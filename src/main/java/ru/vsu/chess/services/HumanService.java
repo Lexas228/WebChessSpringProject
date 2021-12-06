@@ -1,6 +1,10 @@
 package ru.vsu.chess.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.vsu.chess.components.convector.GameConvector;
 import ru.vsu.chess.model.dto.FigureDto;
@@ -8,17 +12,22 @@ import ru.vsu.chess.model.dto.GameStatusDto;
 import ru.vsu.chess.model.dto.MoveDto;
 import ru.vsu.chess.model.entity.*;
 import ru.vsu.chess.model.node.NodeCell;
+import ru.vsu.chess.repository.jpa.PlayerRepository;
 import ru.vsu.chess.services.figureservices.FigureService;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 @Service
-public class HumanService implements PlayerService{
+public class HumanService implements PlayerService, UserDetailsService {
     private GameConvector gameConvector;
     private GameService gameService;
     private Map<FigureType, FigureService> serviceMap;
+    private final PlayerRepository playerRepository;
+
+    @Autowired
+    public HumanService(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+    }
 
     @Autowired
     public void setServiceMap(Map<FigureType, FigureService> serviceMap) {
@@ -57,6 +66,15 @@ public class HumanService implements PlayerService{
             moveDto.setTo(to);
             gameService.doMove(moveDto);
         }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        if(!person.isPresent()){
+            throw new UsernameNotFoundException("User " + s + " was not found");
+        }
+        PersonEntity ps = person.get();
+        return new User(ps.getLogin(), ps.getPassword(), new HashSet<>());
     }
 
     private String getFrom(){

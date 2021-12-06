@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.vsu.chess.components.others.Point;
 import ru.vsu.chess.components.rotator.PositionRotator;
+import ru.vsu.chess.model.dto.Move;
 import ru.vsu.chess.model.dto.MoveDto;
 import ru.vsu.chess.model.entity.*;
 

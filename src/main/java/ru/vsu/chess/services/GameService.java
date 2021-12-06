@@ -3,16 +3,18 @@ package ru.vsu.chess.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.vsu.chess.components.convector.GameConvector;
 import ru.vsu.chess.components.convector.MoveConvector;
 import ru.vsu.chess.components.movechecker.MoveValidator;
+import ru.vsu.chess.model.dto.Move;
 import ru.vsu.chess.model.dto.MoveDto;
 import ru.vsu.chess.model.entity.*;
+import ru.vsu.chess.model.node.NodeCell;
 import ru.vsu.chess.repository.jpa.GameRepository;
 import ru.vsu.chess.repository.jpa.PlayerRepository;
 import ru.vsu.chess.repository.neo4j.CellRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -116,17 +118,46 @@ public class GameService {
         });
     }
 
-    private void doMove(Move move, Player player, Game game){
+    private void doMove(Move move, Game game){
         cellRepository.doMove(move.from(), move.to());
         Board board = game.getBoard();
         Figure active = board.getCellIdFigureMap().get(move.from());
+        board.getFigurePlayerMap().put(active, null);
         board.getCellIdFigureMap().put(move.to(), active);
         board.getCellIdFigureMap().put(move.from(), null);
         board.getFigureCellIdMap().put(active, move.to());
     }
 
     private void updateStatus(Game game){
-
+        Board board = new Board();
+        List<Player> players = new ArrayList<>();
+        game.getEnemyMap().keySet().forEach(player -> {
+            List<Figure> galas = board.getFigurePlayerMap().entrySet().stream()
+                    .filter((entry)-> entry.getKey().getMyType() == FigureType.GALA && Objects.equals(entry.getValue(), player))
+                    .map(Map.Entry::getKey).collect(Collectors.toList());
+            if(galas.isEmpty())game.setGameStatus(GameStatus.END);
+            else{
+                if(galas.size() > 1){
+                   long count = galas.stream().filter(figure -> {
+                        Long cellId = board.getFigureCellIdMap().get(figure);
+                        if(cellId != null && cellId >= 0){
+                            Optional<NodeCell> cell = cellRepository.findById(cellId);
+                            if(cell.isPresent()){
+                                NodeCell nodeCell = cell.get();
+                                return nodeCell.getCellType() == CellType.Middle;
+                            }
+                        }
+                        return false;
+                    }).count();
+                   if(count > 1) game.setGameStatus(GameStatus.END);
+                }else{
+                    players.add(player);
+                }
+            }
+        });
+        if(players.size() >= game.getEnemyMap().keySet().size()){
+            game.setGameStatus(GameStatus.DRAW);
+        }
     }
 
 

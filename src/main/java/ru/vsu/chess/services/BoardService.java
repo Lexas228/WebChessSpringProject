@@ -88,7 +88,6 @@ public class BoardService {
                         cs.setEnd(target);
                         cs.setDirection(l.getValue());
                         n.getConnections().add(cs);
-                        n.getConnections().add(cs);
                     }
                 }
             }
