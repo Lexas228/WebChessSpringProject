@@ -9,7 +9,7 @@ import java.util.*;
 @Component
 public class DirectionHelper {
 
-    private Map<Direction, Direction> oppositeDirections;
+    private final Map<Direction, Direction> oppositeDirections;
     public DirectionHelper(){
         oppositeDirections = Map.of(
                 Direction.NORTH, Direction.SOUTH,
@@ -39,6 +39,10 @@ public class DirectionHelper {
         res.add(Direction.SOUTH_EAST);
         res.add(Direction.SOUTH_WEST);
         return res;
+    }
+
+    public Direction getOppositeFor(Direction direction){
+        return oppositeDirections.get(direction);
     }
 
     public List<Direction> listWith(Direction dr){

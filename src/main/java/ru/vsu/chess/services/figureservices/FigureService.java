@@ -1,14 +1,16 @@
 package ru.vsu.chess.services.figureservices;
 
-import ru.vsu.chess.model.entity.Cell;
+import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Node;
 import ru.vsu.chess.model.entity.FigureType;
 import ru.vsu.chess.model.entity.Game;
 import ru.vsu.chess.model.entity.Player;
-i
+import ru.vsu.chess.model.node.NodeCell;
 
 import java.util.List;
+import java.util.Set;
 
 public interface FigureService {
-    List<Cell> getAvailableMoves(Cell from, Game game, Player forWho);
+    Set<Long> getAvailableMoves(Long id, Game game, Player forWho);
     FigureType getType();
 }

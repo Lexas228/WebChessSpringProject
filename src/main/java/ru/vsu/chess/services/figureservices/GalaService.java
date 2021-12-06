@@ -2,11 +2,10 @@ package ru.vsu.chess.services.figureservices;
 
 import org.springframework.stereotype.Service;
 import ru.vsu.chess.model.entity.*;
+import ru.vsu.chess.model.node.NodeCell;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /*
 Galas move in general as kings in chess. Additionally, when a Gala is on one
@@ -17,41 +16,24 @@ a deflection line.
  */
 
 @Service
-public class GalaService implements FigureService{
+public class GalaService extends AbstractFigureService{
     @Override
-    public List<Cell> getAvailableMoves(Cell from, Game game, Player forWho) {
-        List<Cell> answer = new ArrayList<>();
-        CellType toc = game.getCells().get(from);
-            List<Direction> directions = getMyDirections(from, FigureType.GALA, game);
-            if (toc == CellType.Center) {
-                finder(new HashSet<>(), from, game, answer, directions);
-            } else {
-                for (Direction dr : directions) {
-                    Cell need = from.getCells().get(dr);
-                    if (need != null) {
-                        Figure f = game.getCellFigure().get(need);
-                        if (f == null || hasEnemyFigure(need, game, forWho) && crossed(from, need, game)) {
-                            answer.add(need);
-                        }
-                    }
-                }
-            }
-        return answer;
-    }
-
-    private void finder(Set<Cell> visited, Cell curr, Game game, List<Cell> answer, List<Direction> directions){
-        for(Direction dr : directions){
-            Cell need = curr.getCells().get(dr);
-            if(need != null){
-                Figure f = game.getCellFigure().get(need);
-                Figure k = game.getBasicCellFigurePosition().get(need);
-                if(f == null && k == null && !visited.contains(need)){
-                    answer.add(need);
-                    visited.add(need);
-                    finder(visited, need, game, answer, directions);
-                }
+    public Set<Long> getAvailableMoves(Long id, Game game, Player forWho) {
+        Board board = game.getBoard();
+        Optional<NodeCell> cell = cellRepository.findById(id);
+        if(cell.isPresent()){
+            NodeCell c = cell.get();
+            if(c.getCellType() == CellType.Center){
+                return cellRepository.getAllJumps(board.getId()).stream().map(NodeCell::getId).collect(Collectors.toSet());
+            }else{
+                return cellRepository.getAllAround(id).stream()
+                        .filter(nodeCell -> {
+                            if(nodeCell.getFigureId() < 0) return true;
+                            return canBeatIt(c, nodeCell, board, forWho);
+                        }).map(NodeCell::getId).collect(Collectors.toSet());
             }
         }
+        return null;
     }
 
     @Override

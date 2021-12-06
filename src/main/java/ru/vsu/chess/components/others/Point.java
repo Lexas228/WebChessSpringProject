@@ -1,14 +1,13 @@
 package ru.vsu.chess.components.others;
 
-public record Point(int x, int y) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
+@Data
+@AllArgsConstructor
+public class Point{
+    private int x;
+    private int y;
 
     @Override
     public boolean equals(Object other) {
@@ -30,6 +29,6 @@ public record Point(int x, int y) {
 
     @Override
     public String toString() {
-        return "(" + x + ", " + y + ")";
+        return  x+""+y;
     }
 }

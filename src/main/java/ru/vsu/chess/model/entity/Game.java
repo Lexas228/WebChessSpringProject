@@ -11,41 +11,24 @@ import java.util.Objects;
 @Setter
 @RequiredArgsConstructor
 @Entity
-@Table(name = "Game")
+@Table(name = "game")
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "board_id", nullable = false)
+    private Board board;
+
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "Player_figures",
-            joinColumns = {@JoinColumn(name = "game_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "player_id", referencedColumnName = "id")})
-    @MapKeyJoinColumn(name = "figure_id")
-    private Map<Figure, Player> figurePlayerMap;
-
-    @OneToMany
-    @JoinTable(name = "Cell_figure",
-            joinColumns = {@JoinColumn(name = "game_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "figure_id", referencedColumnName = "id")})
-    @MapKeyJoinColumn(name = "cell_id")
-    private Map<Cell, Figure> cellFigureMap;
-
-    @OneToMany
-    @JoinTable(name = "Figure_Cell",
-            joinColumns = {@JoinColumn(name = "game_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "cell_id", referencedColumnName = "id")})
-    @MapKeyJoinColumn(name = "figure_id")
-    private Map<Figure, Cell> figureCellMap;
-
-    @OneToMany
-    @JoinTable(name = "Enemies",
+    @JoinTable(name = "enemies",
             joinColumns = {@JoinColumn(name = "game_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "enemy_id", referencedColumnName = "id")})
     @MapKeyJoinColumn(name = "player_id")
     private Map<Player, Player> enemyMap;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "active_player_id")
     private Player activePlayer;
 
@@ -53,6 +36,13 @@ public class Game {
     @Enumerated(EnumType.ORDINAL)
     private GameStatus gameStatus;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "player_direction_mapping",
+            joinColumns = {@JoinColumn(name = "game_id", referencedColumnName = "id")})
+    @MapKeyJoinColumn(name = "player_id")
+    @Column(name = "direction")
+    @ToString.Exclude
+    private Map<Player, Direction> playerDirectionMap;
 
 
 

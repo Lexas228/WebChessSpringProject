@@ -1,18 +1,22 @@
 package ru.vsu.chess.components.others;
 
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
+import ru.vsu.chess.model.entity.Direction;
 import ru.vsu.chess.model.entity.FigureType;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Primary
+@Component
 public class BasicGalaPosition implements BasicPosition{
-
-    private final Map<Point, FigureType> basicUp;
-    private final Map<Point, FigureType> basicDown;
+    private final Map<Direction, Map<Point, FigureType>> directionFigureSetMap;
 
     public BasicGalaPosition(){
-        basicUp = new HashMap<>();
-        basicDown = new HashMap<>();
+        Map<Direction, Map<Point, FigureType>> res = new HashMap<>();
+        Map<Point, FigureType> basicUp = new HashMap<>();
+        Map<Point, FigureType> basicDown = new HashMap<>();
         basicUp.put(new Point(0, 0), FigureType.GALA);
         basicUp.put(new Point(1, 0), FigureType.KORNA);
         basicUp.put(new Point(0, 1), FigureType.KORNA);
@@ -56,16 +60,14 @@ public class BasicGalaPosition implements BasicPosition{
         basicUp.put(new Point(7, 1), FigureType.KAMPA);
         basicUp.put(new Point(8, 2), FigureType.KAMPA);
         basicUp.put(new Point(9, 3), FigureType.KAMPA);
+        res.put(Direction.SOUTH, basicDown);
+        res.put(Direction.NORTH, basicUp);
+        directionFigureSetMap = res;
     }
 
 
-    public Map<Point, FigureType> getBasicUp(){
-        return basicUp;
+    @Override
+    public Map<Point, FigureType> getBasicPositionFor(Direction direction) {
+        return directionFigureSetMap.get(direction);
     }
-
-    public Map<Point, FigureType> getBasicDown(){
-        return basicDown;
-    }
-
-
 }

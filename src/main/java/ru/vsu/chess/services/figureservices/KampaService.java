@@ -1,16 +1,12 @@
 package ru.vsu.chess.services.figureservices;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.vsu.chess.model.entity.Figure;
-import ru.vsu.chess.model.entity.FigureType;
+import ru.vsu.chess.model.entity.*;
 import ru.vsu.chess.model.node.NodeCell;
-import ru.vsu.chess.model.entity.Game;
-
-import ru.vsu.chess.model.entity.Direction;
-import ru.vsu.chess.model.entity.CellType;
-import ru.vsu.chess.model.player.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*
 Kampas move diagonally towards the middle of the board until they are in the
@@ -24,46 +20,54 @@ Kampa can't move to "nobile" squares.
  */
 
 @Service
-public class KampaService implements FigureService{
+public class KampaService extends AbstractFigureService{
+    private Map<Direction, Set<CellType>> map;
+    private Map<CellType, Direction> helpMap;
+
+    @Autowired
+    public void setHelpMap(Map<CellType, Direction> helpMap) {
+        this.helpMap = helpMap;
+    }
+
+    @Autowired
+    public void setMap(Map<Direction, Set<CellType>> map) {
+        this.map = map;
+    }
+
     @Override
-    public List<NodeCell> getAvailableMoves(NodeCell from, Game game, Player forWho) {
-        List<NodeCell> answer = new ArrayList<>();
-        CellType r = game.getCells().get(from);
-        List<Direction> list = game.getFiguresDirections().get(r).get(FigureType.KAMPA);
-        for (Direction dr : list) {
-            NodeCell need = from.getCells().get(dr);
-            if (need != null) {
-                Figure f = game.getCellFigure().get(need);
-                boolean cross = crossed(from, need, game);
-                CellType tc = game.getCells().get(need);
-                if ((hasEnemyFigure(need, game, forWho) && cross || f == null) && tc != CellType.Middle) {
-                    answer.add(need);
-                    if(atHome(from, game)){
-                        NodeCell oneMore = need.getCells().get(dr);
-                        if(oneMore != null) {
-                            CellType ct = game.getCells().get(oneMore);
-                            Figure g = game.getCellFigure().get(oneMore);
-                            if (!cross && (g == null || hasEnemyFigure(oneMore, game, forWho) && crossed(need, oneMore, game) && ct != CellType.Middle)){
-                                answer.add(oneMore);
-                            }
+    public Set<Long> getAvailableMoves(Long id, Game game, Player forWho) {
+        Optional<NodeCell> node = cellRepository.findById(id);
+        Board board = game.getBoard();
+        Direction dir = game.getPlayerDirectionMap().get(forWho);
+        Set<CellType> cellTypes = map.get(dir);
+        if(node.isPresent()){
+            NodeCell nodeCell = node.get();
+            if(!nodeCell.isHouse() || !cellTypes.contains(nodeCell.getCellType())){
+                return cellRepository.getAllAround(id).stream().filter(nc ->{
+                   if(nc.getCellType() == CellType.Center) return false;
+                   if(nc.getFigureId() >= 0 && canBeatIt(nodeCell, nc, board, forWho)) return true;
+                   return nc.getFigureId() < 0;
+                }).map(NodeCell::getId).collect(Collectors.toSet());
+            }else{
+                Set<Long> answer = new HashSet<>();
+                Direction direction = helpMap.get(nodeCell.getCellType());
+                List<NodeCell> nodeCells = cellRepository.getSomeToDirection(id, direction, 2);
+                for(int i = 1; i < nodeCells.size(); i++){
+                    NodeCell curr = nodeCells.get(i);
+                    if(curr.isHouse() != nodeCell.isHouse()){
+                        if(curr.getFigureId() < 0 || canBeatIt(nodeCell, curr, board, forWho)){
+                            answer.add(curr.getId());
+                            break;
                         }
                     }
+                    if(curr.getFigureId() > 0 ) break;
+                    answer.add(curr.getId());
                 }
-
+                return answer;
             }
         }
-    return answer;
+        return null;
     }
-
-    private boolean atHome(NodeCell from, Game game){
-        Figure f = game.getCellFigure().get(from);
-        CellType type = game.getCells().get(from);
-        NodeCell startPos = game.getBasicFigureCellPosition().get(f);
-        CellType toc = game.getCells().get(startPos);
-        Map<CellType, Set<CellType>> ls = game.getGalasHomeHelper();
-        return ls != null && ls.get(toc) != null && ls.get(toc).contains(type);
-    }
-
 
     @Override
     public FigureType getType() {

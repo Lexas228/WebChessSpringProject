@@ -10,14 +10,19 @@ import javax.persistence.*;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "Figure")
+@Table(name = "figure")
 public class Figure {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "Type")
+    @Column(name = "type")
     @Enumerated(EnumType.ORDINAL)
     private FigureType myType;
+
+    @Column(name = "color")
+    @Enumerated(EnumType.ORDINAL)
+    private Color color;
+
 }

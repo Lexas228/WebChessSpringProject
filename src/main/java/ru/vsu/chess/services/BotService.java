@@ -1,50 +1,91 @@
 package ru.vsu.chess.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import ru.vsu.chess.model.dto.GameStatusDto;
+import ru.vsu.chess.model.dto.MoveDto;
 import ru.vsu.chess.model.entity.*;
 import ru.vsu.chess.model.node.NodeCell;
+import ru.vsu.chess.repository.jpa.GameRepository;
 import ru.vsu.chess.services.figureservices.FigureService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+@Service
 public class BotService implements PlayerService{
 
-    private final Map<FigureType, FigureService> serviceMap;
+    private Map<FigureType, FigureService> serviceMap;
+    private GameService gameService;
+    private GameRepository gameRepository;
     private static final Random rnd = new Random();
-    @Autowired
-    public BotService(Map<FigureType, FigureService> serviceMap) {
+    @Autowired @Lazy
+    public void setServiceMap(Map<FigureType, FigureService> serviceMap) {
         this.serviceMap = serviceMap;
     }
 
-    @Override
-    public Move getMove(Game game, Player forWho) {
-        Set<Figure> figures = forWho.getMyFigures();
-        Figure fig = getRandomFigure(figures, game);
-        NodeCell from = fig.getCell();
-        List<NodeCell> ce = serviceMap.get(fig.getMyType()).getAvailableMoves(from, game, forWho);
-        while(ce.size() < 1){
-            fig = getRandomFigure(figures, game);
-            from = game.getFigureCell().get(fig);
-            ce = serviceMap.get(fig.getMyType()).getAvailableMoves(from, game, forWho);
+    @Autowired
+    public void setGameService(GameService gameService){
+        this.gameService = gameService;
+    }
+
+    public void setGameRepository(GameRepository gameRepository){
+        this.gameRepository = gameRepository;
+    }
+
+    private Move getMove(Game game, Player player){
+        Board board = game.getBoard();
+       List<Figure> myFigures = getMyFigures(game, player);
+       Collections.shuffle(myFigures);
+        for (Figure curr : myFigures) {
+            Long cellId = board.getFigureCellIdMap().get(curr);
+            FigureService figureService = serviceMap.get(curr.getMyType());
+            Set<Long> available = figureService.getAvailableMoves(cellId, game, player);
+            if (!available.isEmpty()) {
+                System.out.println("for " + cellId);
+                System.out.println(available);
+                int count = 0;
+                int max = rnd.nextInt(available.size());
+                Long need = null;
+                for(Long l : available){
+                    if(count >= max){
+                        need = l;
+                    }
+                    count++;
+                }
+                return new Move(cellId, need);
+            }
         }
-        return new Move(from, ce.get(rnd.nextInt(ce.size())));
+       return null;
+    }
+
+    private List<Figure> getMyFigures(Game game, Player player){
+        Board board = game.getBoard();
+        return game.getBoard().getFigurePlayerMap().entrySet().stream().filter((entry) -> {
+            Figure f = entry.getKey();
+            Player p = entry.getValue();
+            if(p != player) return false;
+            return board.getFigureCellIdMap().get(f) != null;
+        }).map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
 
-    private Figure getRandomFigure(Set<Figure> figures, Game game){
-        Figure f = null;
-        while(f == null){
-            int s = rnd.nextInt(figures.size());
-            int step = 0;
-            for(Figure figure : figures){
-                step++;
-                if(step >= s) {
-                    f = figure;
-                    break;
-                }
+
+
+    @Override
+    public void notification(Player player, Game game) {
+        if(game.getActivePlayer() == player){
+            Move m = getMove(game, player);
+            if(m != null) {
+                MoveDto dto = new MoveDto();
+                dto.setFrom(Long.toString(m.from()));
+                dto.setTo(Long.toString(m.to()));
+                dto.setGameId(game.getId());
+                dto.setPlayerId(player.getId());
+                gameService.doMove(dto);
             }
         }
-        return f;
     }
 
     @Override

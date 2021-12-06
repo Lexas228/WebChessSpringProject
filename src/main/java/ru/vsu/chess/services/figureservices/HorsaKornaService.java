@@ -1,68 +1,70 @@
 package ru.vsu.chess.services.figureservices;
 
-import ru.vsu.chess.model.entity.Figure;
-import ru.vsu.chess.model.entity.FigureType;
-import ru.vsu.chess.model.entity.Game;
-import ru.vsu.chess.model.entity.Direction;
+import org.w3c.dom.Node;
+import ru.vsu.chess.model.entity.*;
+import ru.vsu.chess.model.node.NodeCell;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 /*
-Horsa and Kornd do actually very similar things but with opposite sides. As u could read a
+Horsa and Korna do actually very similar things but with opposite sides. As u could read a
 notation in horsa and korna services they can move in opposite way at home and in the middle so
 I use it to avoid duplicating
  */
-public abstract class HorsaKornaService implements FigureService{
-    private final FigureType figureType;
-
-    public HorsaKornaService(FigureType figureType) {
-        this.figureType = figureType;
-    }
+public abstract class HorsaKornaService extends AbstractFigureService{
 
     @Override
-    public List<Cell> getAvailableMoves(Cell from, Game game, Player forWho) {
-        List<Cell> answer = new ArrayList<>();
-        findAvailableMoves(from, 0, false, answer, game, forWho);
+    public Set<Long> getAvailableMoves(Long id, Game game, Player forWho) {
+        Set<Long> answer = new HashSet<>();
+        Optional<NodeCell> from = cellRepository.findById(id);
+        if(from.isPresent()){
+            NodeCell n = from.get();
+            addBeforeCrossing(n, game, forWho, answer);
+        }
         return answer;
     }
 
-    private void findAvailableMoves(Cell current, int numOfMovesBefore, boolean wasCrossed, List<Cell> available, Game game, Player forWho){
-        List<Direction> directions = getMyDirections(current, figureType, game);
-        finder(directions, available, current, wasCrossed, numOfMovesBefore, game, forWho);
-    }
-
-    private void finder(List<Direction> directions, List<Cell> answer, Cell current, boolean wasCrossed, int numOfMovesBefore, Game game, Player forWho){
-        for(Direction dr : directions) {
-            Cell nCell = current.getCells().get(dr);
-            int tmp = numOfMovesBefore+1;
-            while(nCell != null){
-                if (!crossed(current, nCell, game) || !wasCrossed) {
-                    Figure f = game.getCellFigure().get(nCell);
-                    if (f == null || hasEnemyFigure(nCell, game, forWho) && canBeatIt(wasCrossed, numOfMovesBefore)) {
-                        answer.add(nCell);
-                        if(wasCrossed && numOfMovesBefore > 1) break;
-                        if(crossed(current, nCell, game)){
-                            findAvailableMoves(nCell, tmp, true, answer, game, forWho);
-                            break;
-                        }
-                    }else{
-                        break;
+    private void addBeforeCrossing(NodeCell from, Game game, Player forWho, Set<Long> answer) {
+        Board board = game.getBoard();
+        List<Direction> directions = from.isHouse() ? getInHome() : getInMiddle();
+        for (Direction d : directions) {
+            cellRepository.getCellsToDirBeforeCrossing(d, from.getId()).forEach(nodeCell -> {
+                if(nodeCell.getFigureId() >= 0){
+                    if(canBeatIt(from, nodeCell, board, forWho)){
+                        answer.add(nodeCell.getId());
                     }
                 }else{
-                    break;
+                    if(nodeCell.isHouse() != from.isHouse()){
+                    Integer distance = cellRepository.findDistance(from.getId(), nodeCell.getId());
+                    addAfterCrossing(nodeCell, game, forWho, answer, distance);
+                    }else{
+                        answer.add(nodeCell.getId());
+                    }
                 }
-                nCell = nCell.getCells().get(dr);
-                tmp++;
-            }
+            });
         }
     }
 
-    protected boolean canBeatIt(boolean wasCrossed, int numOfMovesBefore){
-        return wasCrossed;
+    private void addAfterCrossing(NodeCell from, Game game, Player forWho, Set<Long> answer, Integer numOfMovesBefore){
+        int limit = numOfMovesBefore < 2 ? 10 : 1;
+        List<Direction> directions = from.isHouse() ? getInHome() : getInMiddle();
+        for(Direction d : directions){
+            cellRepository.getCellsToDirAfterCrossing(d, from.getId(), limit).stream()
+                    .filter(nodeCell -> {
+                        if(nodeCell == from) return false;
+                        if(nodeCell.getFigureId() < 0) return true;
+                        return canBeatAfterCrossing(nodeCell, game.getBoard(), forWho, numOfMovesBefore);
+                    }).map(NodeCell::getId).forEach(answer::add);
+        }
     }
+
+    protected abstract List<Direction> getInHome();
+    protected abstract List<Direction> getInMiddle();
+    protected abstract FigureType getMyType();
+    protected abstract boolean canBeatAfterCrossing(NodeCell which, Board board, Player forWho, Integer distance);
 
     @Override
     public FigureType getType() {
-        return figureType;
+        return getMyType();
     }
 }

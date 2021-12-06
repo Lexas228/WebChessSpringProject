@@ -1,7 +1,12 @@
 package ru.vsu.chess.services.figureservices;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import ru.vsu.chess.model.entity.FigureType;
+import ru.vsu.chess.model.entity.*;
+import ru.vsu.chess.model.node.NodeCell;
+
+import java.util.List;
+import java.util.Map;
 
 /*
 Horsas are just the opposite of Kornas (with an additional small difference
@@ -12,14 +17,34 @@ one square. Horsas only take in moves where they pass the deflection line,
 but not when they move only one square in rookwise fashion.
  */
 @Service
-public class HorsaService extends HorsaKornaService implements FigureService{
-
-    public HorsaService() {
-        super(FigureType.HORSA);
+@Primary
+public class HorsaService extends HorsaKornaService{
+    @Override
+    protected List<Direction> getInHome() {
+        return List.of(Direction.NORTH_EAST, Direction.NORTH_WEST);
     }
 
     @Override
-    protected boolean canBeatIt(boolean wasCrossed, int numOfMovesBefore) {
-        return wasCrossed && numOfMovesBefore > 1;
+    protected List<Direction> getInMiddle() {
+        return List.of(Direction.EAST, Direction.NORTH);
+    }
+
+    @Override
+    protected FigureType getMyType() {
+        return FigureType.HORSA;
+    }
+
+    @Override
+    protected boolean canBeatAfterCrossing(NodeCell which, Board board, Player forWho, Integer distance) {
+        Map<Figure, Player> figurePlayerMap = board.getFigurePlayerMap();
+        if(figurePlayerMap != null){
+            Map<Long, Figure> figureIdMap = board.getCellIdFigureMap();
+            if(figureIdMap != null){
+                Figure figure = figureIdMap.get(which.getId());
+                Player player = figurePlayerMap.get(figure);
+                return forWho != player && distance < 2;
+            }
+        }
+        return false;
     }
 }

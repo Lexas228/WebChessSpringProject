@@ -9,9 +9,11 @@ import javax.persistence.*;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@Table(name = "player")
 public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "Type")

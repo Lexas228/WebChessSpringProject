@@ -7,6 +7,4 @@ public enum CellType {
     RD_House,
     LU_House,
     RU_House,
-    Crossing,
-    Base
 }
